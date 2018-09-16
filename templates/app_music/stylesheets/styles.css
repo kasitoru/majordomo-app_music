@@ -1,0 +1,393 @@
+*{box-sizing: border-box;}
+
+body {
+	margin: 0px;
+	padding: 0px;
+	-webkit-font-smoothing: antialiased;
+}
+
+.app_music_loading_screen {
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	z-index: 9990;
+	background-color: #363F45;
+	background-image: url('../images/loading.png');
+	background-repeat: no-repeat;
+	background-position: center;
+}
+
+.unselectable {
+	-moz-user-select: -moz-none;
+	-khtml-user-select: none;
+	-webkit-user-select: none;
+	-o-user-select: none;
+	user-select: none;
+}
+
+.playerContainer {
+	position: relative;
+	overflow: hidden;
+	width: 340px;
+	height: 370px;
+	margin: 10px auto;
+	background-color: gray;
+	border-radius: 5px;
+	box-shadow: 0px .5px 2px black;
+}
+
+.imageDisplay {
+	width: inherit;
+	height: 205px;
+	background-color: #CCCCCC;
+	background: url('../images/defaultImage.jpg') no-repeat 0px 0px;
+	background-size: cover;
+}
+
+.shadow {
+	width: inherit;
+	height: 205px;
+	background: url('../images/gloss.png')
+}
+
+.hamIcon {
+	position: absolute;
+	cursor: pointer;
+	width: 15px;
+	height: 10px;
+	right: 10px;
+	top: 10px;
+}
+
+.hamIcon div {
+	position: relative;
+	background-color: #989DA0;
+	width: inherit;
+	height: 2px;
+	margin-bottom: 2px;
+	border-radius: 2px;
+}
+
+.audioPlaylist {
+	position: absolute;
+	overflow: hidden;
+	display: none;
+	top: 0px;
+	left: 0px;
+	width: 100%;
+	height: 100%;
+	background: #363F45;
+	box-shadow: 0px 0px 3px #000;
+	z-index: 1000;
+	border-radius: 5px;
+}
+
+.audioPlaylist .nowPlaying {
+	position: relative;
+	width: inherit;
+	height: 150px;
+	padding: 5px 10px;
+	background: url("../images/defaultImage.jpg") no-repeat;
+	background-size: cover;
+	font-family: Helvetica, Arial, sans-serif;
+	font-size: 10px;
+	color: #fff;
+	text-shadow: 0px 1px 3px #000206;
+}
+
+.nowPlaying h2, p {
+	margin: 5px 0px;
+	position: relative;
+	z-index: 100;
+}
+
+.nowPlaying h2 {
+	font-family: Helvetica, Arial, sans-serif;
+	font-size: 20px;
+	color: #fff;
+}
+
+.nowPlaying p.duration {
+	position: absolute;
+	bottom: 5px;
+	right: 10px;
+}
+
+.nowPlaying .arrow {
+	position: absolute;
+	cursor: pointer;
+	top: 10px;
+	right: 10px;
+	width: 10px;
+	height: 10px;
+	border-top: 2px solid #A6AAAD;
+	border-left: 2px solid #B5B7B9;
+	transform: rotate(45deg);
+	z-index: 1000;
+}
+
+.nowPlaying .listShadow {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	width: inherit;
+	height: inherit;
+	background-color: rgba(0,0,0,.5);
+}
+
+ol {
+	list-style-type: none;
+	margin: 0px;
+	padding: 10px;
+	width: inherit;
+	height: 220px;
+	overflow-y: scroll;
+}
+
+ol > li {
+	counter-increment: customlistcounter;
+	padding: 10px;
+	font-family: Helvetica, Arial, sans-serif;
+	font-size: 12px;
+	color: #fff;
+	border-bottom: 1px solid #4A575E;
+}
+
+ol > li:hover {
+	background-color: #4A575E;
+}
+
+ol > li:before {
+	content: counter(customlistcounter) " ";
+	padding: 10px 10px 10px 5px;
+	color: #4A575E;
+}
+
+ol:first-child {
+	counter-reset: customlistcounter;
+}
+
+.listActive {
+	background-color: #5A6971;
+}
+
+.controlsContainer {
+	position: relative;
+	width: inherit;
+	height: 165px;
+	background-color: #363F45;
+}
+
+.shuffle {
+	position: absolute;
+	top: 10px;
+	left: 10px;
+	width: 20px;
+	height: 20px;
+	background: url("../images/shuffle.png") no-repeat 0px 0px;
+	background-size: contain;
+	cursor: pointer;
+	transition: .2s;
+}
+
+.shuffle.active {
+	background: url("../images/shuffleActive.png") no-repeat 0px 0px;
+	background-size: contain;
+	transition: .2s;
+}
+
+.loop {
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	width: 20px;
+	height: 20px;
+	background: url("../images/loop.png") no-repeat 0px 0px;
+	background-size: contain;
+	cursor: pointer;
+	transition: .2s;
+}
+
+.loop.active_loop {
+	background: url("../images/loopActive.png") no-repeat 0px 0px;
+	background-size: contain;
+	transition: .2s;
+}
+
+.loop.active_repeat {
+	background: url("../images/repeatActive.png") no-repeat 0px 0px;
+	background-size: contain;
+	transition: .2s;
+}
+
+.progressMeter {
+	position: relative;
+	display: inline-block;
+	width: 250px;
+	height: 10px;
+	top: 10px;
+	left: 45px;
+}
+
+.progressBar {
+	position: relative;
+	width: 250px;
+	height: 1px;
+	top: 5px;
+	background-color: whitesmoke;
+}
+
+.thumbScrubber {
+	cursor: pointer;
+	position: absolute;
+	top: 0px;
+	width: 10px;
+	height: 10px;
+	background-color: white;
+	border-radius: 10px;
+}
+
+.thumbScrubber:hover {
+	top: 0px;
+	transform: scale(1.5,1.5);
+	transition: .1s;
+}
+
+.largeScrubber {
+	top: 0px;
+	transform: scale(1.5,1.5);
+	transition: .1s;
+}
+
+.currentTime, .totalTime {
+	position: absolute;
+	font-family: Helvetica, Arial, sans-serif;
+	font-size: 10px;
+	color: white;
+	opacity: 1;
+}
+
+.currentTime {
+	left: -10px;
+	top: 20px;
+}
+
+.totalTime {
+	right: -10px;
+	top: 20px;
+}
+
+.descriptionCtn {
+	position: relative;
+	top: 20px;
+	margin: 0px auto;
+	overflow: hidden;
+	width: 115px;
+	height: 20px;
+}
+
+.songDescription {
+	position: absolute;
+	font-family: Helvetica, Arial, sans-serif;
+	font-size: 12px;
+	color: white;
+	text-align: center;
+	white-space: nowrap;
+	display: inline;
+	padding-right: 15px;
+	line-height: 22px;
+}
+
+.songDescription:nth-child(1) {
+	transform: translateX(0%);
+}
+
+.songDescription:nth-child(2) {
+	transform: translateX(100%);
+}
+
+.marquee {
+	animation: marquee 10s ease infinite;
+	-webkit-animation: marquee 10s ease infinite;
+}
+
+.marqueetwo {
+	animation: marqueetwo 10s ease infinite;
+	-webkit-animation: marqueetwo 10s ease infinite;
+}
+
+.playPause {
+	position: absolute;
+	width: 50%;
+	height: 70px;
+	left: 25%;
+	bottom: 30px;
+}
+
+.prev, .next {
+	position: absolute;
+	width: 56px;
+	height: 56px;
+	z-index: 1;
+	cursor: pointer;
+}
+
+.prev {
+	background: url("../images/back.png") no-repeat 0px 0px;
+	background-size: contain;
+	top: 10px;
+}
+
+.next {
+	background: url("../images/forward.png") no-repeat 0px 0px;
+	background-size: contain;
+	top: 10px;
+	right: 0px;
+}
+
+.play_pause {
+	position: absolute;
+	width: 72px;
+	height: 72px;
+	left: 49px;
+	background: url("../images/pause.png") no-repeat 0px 0px;
+	background-size: contain;
+	z-index: 3;
+	cursor: pointer;
+}
+
+.play_pause.active {
+	background: url("../images/play.png") no-repeat 0px 0px;
+	background-size: contain;
+}
+
+/*Marquee animation*/
+@keyframes marquee {
+	0%{
+		transform: translateX(0%);
+	}
+	20%{
+		transform: translateX(0%);
+	}
+	40%{
+		transform: translateX(0%);
+	}
+	100%{
+		transform: translateX(-100%);
+	}
+}
+
+@keyframes marqueetwo {
+	0%{
+		transform: translateX(100%);
+	}
+	20%{
+		transform: translateX(100%);
+	}
+	40%{
+		transform: translateX(100%);
+	}
+	100%{
+		transform: translateX(0%);
+	}
+}
