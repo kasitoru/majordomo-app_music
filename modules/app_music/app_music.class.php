@@ -136,9 +136,10 @@ class app_music extends module {
 
 	// FrontEnd
 	function usual(&$out) {
+		global $terminal;
 		// Config
-		$out['terminal'] = $this->config['terminal'];
-		$out['skin'] = $this->config['skin'];
+		$out['terminal'] = (isset($this->terminal)?$this->terminal:$this->config['terminal']);
+		$out['skin'] = (isset($this->skin)?$this->skin:$this->config['skin']);
 		/*
 		global $ajax;
 		if(!empty($ajax)) {
