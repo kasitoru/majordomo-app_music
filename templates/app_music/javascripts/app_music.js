@@ -50,8 +50,12 @@ class app_music {
 	}
 	
 	// Create snapshot of status object
-	create_snapshot() {
-		this.snapshot = $.extend(true, {}, this.status);
+	create_snapshot(property) {
+		if(!!property) {
+			this.snapshot[property] = $.extend(true, {}, this.status[property]);
+		} else {
+			this.snapshot = $.extend(true, {}, this.status);
+		}
 	}
 	
 	// Check snapshot of status object
@@ -99,20 +103,20 @@ class app_music {
 							var __this = this;
 							$(_this.container).find(this).addClass('active');
 							var offset = $(this).offset();
-							if($(this).attr('data-type') == 'vertical') { // vertical
-								var relative = (e.pageY - offset.top) - ($(_this.container).find('.app_music_track_scrubber_element').outerHeight(true)/2);
+							if($(this).attr('data-type') == 'vertical') {
 								var progress_length = $(_this.container).find(this).outerHeight(true);
-							} else { // horizontal
-								var relative = (e.pageX - offset.left) - ($(_this.container).find('.app_music_track_scrubber_element').outerWidth(true)/2);
+								var relative = (e.pageX - offset.left);
+							} else {
 								var progress_length = $(_this.container).find(this).outerWidth(true);
+								var relative = (e.pageX - offset.left);
 							}
-							var track_position = Math.round((relative/(progress_length/100))*(_this.status.length/100));
+							var track_position = Math.round(relative/(progress_length/100)*(_this.status.length/100));
 							_this.seek(track_position, function() {
 								$(_this.container).find(__this).removeClass('active');
 							});
 						});
 						$(_this.container).find('.app_music_track_scrubber_element').draggable({
-							axis: ($(this).attr('data-type') == 'vertical'?'y':'x'),
+							axis: ($(_this.container).find('.app_music_track_scrubber_element').attr('data-type') == 'vertical'?'y':'x'),
 							containment: $(_this.container).find('.app_music_track_progress_element'),
 							start: function() {
 								$(_this.container).find(this).addClass('active');
@@ -121,26 +125,56 @@ class app_music {
 								var __this = this;
 								if($(this).draggable('option').axis == 'y') {
 									var progress_length = $(_this.container).find('.app_music_track_progress_element').outerHeight(true);
+									var scrubber_length = $(_this.container).find('.app_music_track_scrubber_element').outerHeight(true);
+									var track_position = Math.round(parseInt($(this).css('top'), 10)/((progress_length-scrubber_length)/_this.status.length));
 								} else {
 									var progress_length = $(_this.container).find('.app_music_track_progress_element').outerWidth(true);
+									var scrubber_length = $(_this.container).find('.app_music_track_scrubber_element').outerWidth(true);
+									var track_position = Math.round(parseInt($(this).css('left'), 10)/((progress_length-scrubber_length)/_this.status.length));
 								}
-								var track_position = Math.round((parseInt($(this).css('left'), 10)/(progress_length/100))*(_this.status.length/100));
 								_this.seek(track_position, function() {
 									$(_this.container).find(__this).removeClass('active');
 								});
 							}
 						});
-						/*
+						$(_this.container).find('.app_music_volume_progress_element').on('click', function(e) {
+							var __this = this;
+							$(_this.container).find(this).addClass('active');
+							var offset = $(this).offset();
+							if($(this).attr('data-type') == 'vertical') {
+								var volume_length = $(_this.container).find(this).outerHeight(true);
+								var relative = (e.pageY - offset.top);
+							} else {
+								var volume_length = $(_this.container).find(this).outerWidth(true);
+								var relative = (e.pageX - offset.left);
+							}
+							var volume_level = Math.round(relative/(volume_length/100));
+							_this.set_volume(volume_level, function() {
+								$(_this.container).find(__this).removeClass('active');
+							});
+						});
 						$(_this.container).find('.app_music_volume_scrubber_element').draggable({
-							axis: 'x',
+							axis: ($(_this.container).find('.app_music_volume_scrubber_element').attr('data-type') == 'vertical'?'y':'x'),
 							containment: $(_this.container).find('.app_music_volume_progress_element'),
+							start: function() {
+								$(_this.container).find(this).addClass('active');
+							},
 							stop: function() {
-								var progress_width = $(_this.container).find('.app_music_volume_progress_element').outerWidth(true);
-								var volume_position = Math.round((parseInt($(this).css('left'), 10)/(progress_width/100)));
-								_this.set_volume(volume_position);
+								var __this = this;
+								if($(this).draggable('option').axis == 'y') {
+									var volume_length = $(_this.container).find('.app_music_volume_progress_element').outerHeight(true);
+									var scrubber_length = $(_this.container).find('.app_music_volume_scrubber_element').outerHeight(true);
+									var volume_level = Math.round(parseInt($(this).css('top'), 10)/((volume_length-scrubber_length)/100));
+								} else {
+									var volume_length = $(_this.container).find('.app_music_volume_progress_element').outerWidth(true);
+									var scrubber_length = $(_this.container).find('.app_music_volume_scrubber_element').outerWidth(true);
+									var volume_level = Math.round(parseInt($(this).css('left'), 10)/((volume_length-scrubber_length)/100));
+								}
+								_this.set_volume(volume_level, function() {
+									$(_this.container).find(__this).removeClass('active');
+								});
 							}
 						});
-						*/
 						$(_this.container).find('.app_music_pl_add_button').on('click', function() {
 							_this.pl_add($(this).attr('data-file'));
 						});
@@ -252,46 +286,38 @@ class app_music {
 					return true;
 				});
 			}
+			this.create_snapshot('track_id');
 		}
 		// Length
 		if(this.check_snapshot('length')) {
-			if(this.status.length <= 0) {
-				$(this.container).find('.app_music_track_length_text').text('00:00');
-			} else {
-				var h = Math.floor(this.status.length/60/60);
-				var m = Math.floor((this.status.length-h*60*60)/60);
-				var s = Math.floor((this.status.length-h*60*60-m*60));
-				var length = (h>0?h+':':'')+('00'+m).slice(-2)+':'+('00'+s).slice(-2);
-				$(this.container).find('.app_music_track_length_text').text(length);
-			}
+			var h = Math.floor(this.status.length/60/60);
+			var m = Math.floor((this.status.length-h*60*60)/60);
+			var s = Math.floor((this.status.length-h*60*60-m*60));
+			var length = (h>0?h+':':'')+('00'+m).slice(-2)+':'+('00'+s).slice(-2);
+			$(this.container).find('.app_music_track_length_text').text(length);
+			this.create_snapshot('length');
 		}
 		// Time
 		if(this.check_snapshot('time')) {
-			if(this.status.time <= 0) {
-				$(this.container).find('.app_music_track_time_text').text('00:00');
-				if(!$(this.container).find('.app_music_track_progress_element').hasClass('active') && !$(this.container).find('.app_music_track_scrubber_element').hasClass('active')) {
-					if($(this.container).find('.app_music_track_scrubber_element').attr('data-type') == 'vertical') {
-						$(this.container).find('app_music_track_scrubber_element').css('top', '0px');
-					} else {
-						$(this.container).find('app_music_track_scrubber_element').css('left', '0px');
-					}
-				}
-			} else {
-				var h = Math.floor(this.status.time/60/60);
-				var m = Math.floor((this.status.time-h*60*60)/60);
-				var s = Math.floor((this.status.time-h*60*60-m*60));
-				var time = (h>0?h+':':'')+('00'+m).slice(-2)+':'+('00'+s).slice(-2);
-				$(this.container).find('.app_music_track_time_text').text(time);
-				if(!$(this.container).find('.app_music_track_progress_element').hasClass('active') && !$(this.container).find('.app_music_track_scrubber_element').hasClass('active')) {
-					if($(this.container).find('.app_music_track_scrubber_element').attr('data-type') == 'vertical') {
-						var progress_length = $(this.container).find('.app_music_track_progress_element').outerHeight(true);
-						$(this.container).find('.app_music_track_scrubber_element').css('top', Math.round((progress_length/100)*(this.status.time/(this.status.length/100)))+'px');
-					} else {
-						var progress_length = $(this.container).find('.app_music_track_progress_element').outerWidth(true);
-						$(this.container).find('.app_music_track_scrubber_element').css('left', Math.round((progress_length/100)*(this.status.time/(this.status.length/100)))+'px');
-					}
+			var h = Math.floor(this.status.time/60/60);
+			var m = Math.floor((this.status.time-h*60*60)/60);
+			var s = Math.floor((this.status.time-h*60*60-m*60));
+			var time = (h>0?h+':':'')+('00'+m).slice(-2)+':'+('00'+s).slice(-2);
+			$(this.container).find('.app_music_track_time_text').text(time);
+			if(!$(this.container).find('.app_music_track_progress_element').hasClass('active') && !$(this.container).find('.app_music_track_scrubber_element').hasClass('active')) {
+				if($(this.container).find('.app_music_track_scrubber_element').attr('data-type') == 'vertical') {
+					var progress_length = $(this.container).find('.app_music_track_progress_element').outerHeight(true);
+					var scrubber_length = $(this.container).find('.app_music_track_scrubber_element').outerHeight(true);
+					var scrubber_level = Math.round(((progress_length-scrubber_length)/100)*(this.status.time/(this.status.length/100)));
+					$(this.container).find('.app_music_track_scrubber_element').css('top', scrubber_level+'px');
+				} else {
+					var progress_length = $(this.container).find('.app_music_track_progress_element').outerWidth(true);
+					var scrubber_length = $(this.container).find('.app_music_track_scrubber_element').outerWidth(true);
+					var scrubber_level = Math.round(((progress_length-scrubber_length)/100)*(this.status.time/(this.status.length/100)));
+					$(this.container).find('.app_music_track_scrubber_element').css('left', scrubber_level+'px');
 				}
 			}
+			this.create_snapshot('time');
 		}
 		// State
 		if(this.check_snapshot('state')) {
@@ -304,12 +330,26 @@ class app_music {
 				$(this.container).find('.app_music_stop_button').addClass('active');
 				$(this.container).find('.app_music_play_button').removeClass('active');
 			}
+			this.create_snapshot('state');
 		}
 		// Volume
-		/*
 		if(this.check_snapshot('volume')) {
+			if(!$(this.container).find('.app_music_volume_progress_element').hasClass('active') && !$(this.container).find('.app_music_volume_scrubber_element').hasClass('active')) {
+				if($(this.container).find('.app_music_volume_scrubber_element').attr('data-type') == 'vertical') {
+					var volume_length = $(this.container).find('.app_music_volume_progress_element').outerHeight(true);
+					var scrubber_length = $(this.container).find('.app_music_volume_scrubber_element').outerHeight(true);
+					var scrubber_level = Math.round(((volume_length-scrubber_length)/100)*(this.status.volume));
+					$(this.container).find('.app_music_volume_scrubber_element').css('top', scrubber_level+'px');
+				} else {
+					var volume_length = $(this.container).find('.app_music_volume_progress_element').outerWidth(true);
+					var scrubber_length = $(this.container).find('.app_music_volume_scrubber_element').outerWidth(true);
+					var scrubber_level = Math.round(((volume_length-scrubber_length)/100)*(this.status.volume));
+					$(this.container).find('.app_music_volume_scrubber_element').css('left', scrubber_level+'px');
+				}
+				this.create_snapshot('volume');
+			}
+			
 		}
-		*/
 		// Random
 		if(this.check_snapshot('random')) {
 			if(this.status.random) {
@@ -317,6 +357,7 @@ class app_music {
 			} else {
 				$(this.container).find('.app_music_pl_random_button').removeClass('active');
 			}
+			this.create_snapshot('random');
 		}
 		// Loop
 		if(this.check_snapshot('loop')) {
@@ -325,6 +366,7 @@ class app_music {
 			} else {
 				$(this.container).find('.app_music_loop_button').removeClass('active');
 			}
+			this.create_snapshot('loop');
 		}
 		// Repeat
 		if(this.check_snapshot('repeat')) {
@@ -333,6 +375,7 @@ class app_music {
 			} else {
 				$(this.container).find('.app_music_repeat_button').removeClass('active');
 			}
+			this.create_snapshot('repeat');
 		}
 		// Loop & Repeat
 		if(this.check_snapshot('loop') || this.check_snapshot('repeat')) {
@@ -346,16 +389,18 @@ class app_music {
 				$(this.container).find('.app_music_pl_loop_repeat_button').removeClass('active_loop');
 				$(this.container).find('.app_music_pl_loop_repeat_button').removeClass('active_repeat');
 			}
+			this.create_snapshot('loop');
+			this.create_snapshot('repeat');
 		}
 		// Playlist
 		if(this.check_snapshot('playlist')) {
+			$(this.container).find('.app_music_tracklist_list').children('li').remove();
 			this.status.playlist.every(function(item) {
 				$(_this.container).find('.app_music_tracklist_list').append('<li class="app_music_pl_play_button" data-id="'+item.id+'">'+item.name+'</li>');
 				return true;
 			});
+			this.create_snapshot('playlist');
 		}
-		// Create snapshot
-		this.create_snapshot();
 		// Callback
 		if(!!callback) {
 			callback();
@@ -376,9 +421,22 @@ class app_music {
 			if(json.success) {
 				_this.status.track_id	= json.data.track_id;
 				_this.status.length		= json.data.length;
+				if(_this.status.length < 0) {
+					_this.status.length = 0;
+				}
 				_this.status.time		= json.data.time;
+				if(_this.status.time < 0) {
+					_this.status.time = 0;
+				} else if(_this.status.time > _this.status.length) {
+					_this.status.time = _this.status.length;
+				}
 				_this.status.state		= json.data.state;
 				_this.status.volume		= json.data.volume;
+				if(_this.status.volume < 0) {
+					_this.status.volume = 0;
+				} else if(_this.status.volume > 100) {
+					_this.status.volume = 100;
+				}
 				_this.status.random		= json.data.random;
 				_this.status.loop		= json.data.loop;
 				_this.status.repeat		= json.data.repeat;

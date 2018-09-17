@@ -5,12 +5,18 @@
 <div id="app_music" class="playerContainer unselectable">
 	<div class="app_music_loading_screen"></div>
 	<div class="imageDisplay">
+		<div class="volumeIcon"></div>
 		<div class="hamIcon">
 			<div class="top"></div>
 			<div class="middle"></div>
 			<div class="bottom"></div>
 		</div>
 		<div class="shadow"></div>
+	</div>
+	<div class="audioVolume">
+		<div class="progressBar app_music_volume_progress_element" data-type="vertical">
+			<div class="thumbScrubber app_music_volume_scrubber_element" data-type="vertical"></div>
+		</div>
 	</div>
 	<div class="audioPlaylist">
 		<div class="nowPlaying">
@@ -21,16 +27,16 @@
 			<div class="listShadow"></div>
 		</div>
 		<div class="songList">
-			<ol class="app_music_tracklist_list">
-			</ol>
+			<ol class="app_music_tracklist_list"></ol>
 		</div>
 	</div>
 	<div class="controlsContainer" >
 		<div class="topControls">
 			<div class="shuffle app_music_pl_random_button" title="Случайный порядок"></div>
 			<div class="progressMeter" >
-				<div class="progressBar app_music_track_progress_element"></div>
-				<div class="thumbScrubber app_music_track_scrubber_element"></div>
+				<div class="progressBar app_music_track_progress_element" data-type="horizontal">
+					<div class="thumbScrubber app_music_track_scrubber_element" data-type="horizontal"></div>
+				</div>
 				<div class="currentTime app_music_track_time_text">00:00</div>
 				<div class="totalTime app_music_track_length_text">00:00</div>
 			</div>
@@ -52,6 +58,9 @@
 	var music_player = new app_music('[#terminal#]');
 	$(document).ready(function () {
 		music_player.init_player(function() {
+			$(music_player.container).find('.volumeIcon').on('click', function() {
+				$(music_player.container).find('.audioVolume').slideToggle(500, 'swing');
+			});
 			$(music_player.container).find('.arrow,.hamIcon').on('click', function() {
 				$(music_player.container).find('.audioPlaylist').slideToggle(500, 'swing');
 			});

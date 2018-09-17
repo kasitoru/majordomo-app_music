@@ -50,6 +50,68 @@ body {
 	background: url('images/gloss.png')
 }
 
+.thumbScrubber {
+	cursor: pointer;
+	position: absolute;
+	top: 0px;
+	width: 10px;
+	height: 10px;
+	background-color: white;
+	border-radius: 10px;
+}
+
+.thumbScrubber:hover {
+	top: 0px;
+	transform: scale(1.5,1.5);
+	transition: .1s;
+}
+
+.largeScrubber {
+	top: 0px;
+	transform: scale(1.5,1.5);
+	transition: .1s;
+}
+
+.volumeIcon {
+	position: absolute;
+	cursor: pointer;
+	width: 16px;
+	height: 16px;
+	left: 10px;
+	top: 10px;
+	background: url('images/volume.png');
+	background-position: left top;
+	background-repeat: no-repeat;
+}
+
+.audioVolume {
+	position: absolute;
+	display: none;
+	top: 30px;
+	left: 5px;
+	width: 25px;
+	height: 170px;
+	background: rgba(0,0,0,.5);
+	box-shadow: 0px 0px 3px #000;
+	z-index: 1000;
+	border-radius: 5px;
+	padding: 10px 0 10px 0;
+}
+
+.audioVolume .progressBar {
+	cursor: pointer;
+	position: relative;
+	width: 1px;
+	height: 150px;
+	top: 0px;
+	left: 12px;
+	background-color: whitesmoke;
+}
+
+.audioVolume .thumbScrubber {
+	left: -5px;
+}
+
 .hamIcon {
 	position: absolute;
 	cursor: pointer;
@@ -61,7 +123,7 @@ body {
 
 .hamIcon div {
 	position: relative;
-	background-color: #989DA0;
+	background-color: #3C3C3C;
 	width: inherit;
 	height: 2px;
 	margin-bottom: 2px;
@@ -238,26 +300,8 @@ ol:first-child {
 	background-color: whitesmoke;
 }
 
-.thumbScrubber {
-	cursor: pointer;
-	position: absolute;
-	top: 0px;
-	width: 10px;
-	height: 10px;
-	background-color: white;
-	border-radius: 10px;
-}
-
-.thumbScrubber:hover {
-	top: 0px;
-	transform: scale(1.5,1.5);
-	transition: .1s;
-}
-
-.largeScrubber {
-	top: 0px;
-	transform: scale(1.5,1.5);
-	transition: .1s;
+.progressBar .thumbScrubber {
+	top: -5px;
 }
 
 .currentTime, .totalTime {
