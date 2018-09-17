@@ -24,7 +24,7 @@ class app_music {
 			'next',
 			'previous',
 			'seek',
-			//'set_volume',
+			'set_volume',
 			'pl_get',
 			//'pl_add',
 			//'pl_empty',
@@ -304,14 +304,18 @@ class app_music {
 					if(item.id == _this.status.track_id) {
 						$(_this.container).find('.app_music_track_title_text').text(item.name);
 						$.ajax({
-							url: '/popup/app_music.html?ajax=1&command=get_cover&param='+encodeURIComponent(item.file),
+							url: '/popup/app_music.html?ajax=1&command=check_cover&param='+encodeURIComponent(item.file),
 							dataType: 'json'
 						}).done(function(json) {
-							console.warn('get_cover(): '+json.message);
-							$(_this.container).find('.app_music_cover_image').css('background-image', '');
-						}).error(function(jqXHR, textStatus, errorThrown) {
-							if(textStatus == 'parsererror') {
-								$(_this.container).find('.app_music_cover_image').css('background-image', 'url("/popup/app_music.html?ajax=1&command=get_cover&param='+encodeURIComponent(item.file)+'")');
+							if(json.success) {
+								if(json.data) {
+								   $(_this.container).find('.app_music_cover_image').css('background-image', 'url("/popup/app_music.html?ajax=1&command=get_cover&param='+encodeURIComponent(item.file)+'")');
+								} else {
+									$(_this.container).find('.app_music_cover_image').css('background-image', '');
+								}
+							} else {
+								console.error('check_cover(): '+json.message);
+								$(_this.container).find('.app_music_cover_image').css('background-image', '');
 							}
 						});
 						return false;

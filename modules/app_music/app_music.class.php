@@ -151,6 +151,30 @@ class app_music extends module {
 			);
 			// Command
 			switch($command) {
+				case 'check_cover': // Check cover
+					if(strlen($param)>0) {
+						include_once('getid3/getid3.php');
+						$getid3 = new getID3;
+						$param = urldecode($param);
+						$param = str_replace('file:///', '', $param);
+						$info = $getid3->analyze($param);
+						if(!isset($info['error'])) {
+							$json['success'] = TRUE;
+							$json['message'] = 'OK';
+							if(isset($info['id3v2']['APIC'][0])) {
+								$json['data'] = TRUE;
+							} else {
+								$json['data'] = FALSE;
+							}
+						} else {
+							$json['success'] = FALSE;
+							$json['message'] = implode('; ', $info['error']);
+						}
+					} else {
+						$json['success'] = FALSE;
+						$json['message'] = 'Input is missing!';
+					}
+					break;
 				case 'get_cover': // Get cover
 					if(strlen($param)>0) {
 						include_once('getid3/getid3.php');
