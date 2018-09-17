@@ -83,8 +83,9 @@ class app_music extends module {
 	function admin(&$out) {
 		// Save action
 		if($this->edit_mode == 'save') {
-			global $terminal;
+			global $terminal, $skin;
 			$this->config['terminal'] = $terminal;
+			$this->config['skin'] = $skin;
 			$this->saveConfig();
 			// Redirect
 			$this->redirect('?');
@@ -95,6 +96,17 @@ class app_music extends module {
 		if($terminals[0]['NAME']) {
 			foreach($terminals as $terminal) {
 				$out['TERMINALS'][] = $terminal;
+			}
+		}
+		// Skins
+		$out['skin'] = $this->config['skin'];
+		$skins = scandir(DIR_TEMPLATES.$this->name.'/skins');
+		if(is_array($skins)) {
+			foreach($skins as $skin) {
+				$skin = DIR_TEMPLATES.$this->name.'/skins/'.$skin;
+				if(is_dir($skin) && file_exists($skin.'/index.html')) {
+					$out['SKINS'][] = array('NAME' => basename($skin));
+				}
 			}
 		}
 	}
@@ -126,7 +138,7 @@ class app_music extends module {
 	function usual(&$out) {
 		// Config
 		$out['terminal'] = $this->config['terminal'];
-		
+		$out['skin'] = $this->config['skin'];
 		/*
 		global $ajax;
 		if(!empty($ajax)) {
