@@ -230,6 +230,7 @@ ol:first-child {
 }
 
 .progressBar {
+	cursor: pointer;
 	position: relative;
 	width: 250px;
 	height: 1px;
