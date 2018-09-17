@@ -88,8 +88,12 @@ class app_music extends module {
 			$this->config['skin'] = $skin;
 			$this->saveConfig();
 			// Redirect
-			$this->redirect('?');
+			$this->redirect('?ok');
 		}
+		// Alerts
+		global $ok, $error;
+		if(isset($ok)) $out['OK'] = '<#LANG_DATA_SAVED#>';
+		if(isset($error)) $out['ERROR'] = '<#LANG_FILLOUT_REQURED#>';
 		// Terminal
 		$out['terminal'] = $this->config['terminal'];
 		$terminals = SQLSelect('SELECT `NAME`, `TITLE` FROM `terminals` ORDER BY `TITLE`');
@@ -136,47 +140,60 @@ class app_music extends module {
 
 	// FrontEnd
 	function usual(&$out) {
-		global $terminal;
-		// Config
-		$out['terminal'] = (isset($this->terminal)?$this->terminal:$this->config['terminal']);
-		$out['skin'] = (isset($this->skin)?$this->skin:$this->config['skin']);
-		/*
-		global $ajax;
-		if(!empty($ajax)) {
-			global $command;
-			$json = array('error'=>0, 'message'=>NULL, 'data'=>NULL);
+		global $ajax, $command, $param;
+		if(isset($ajax)) {
+			// JSON default
+			$json = array(
+				'command'			=> $command,
+				'success'			=> FALSE,
+				'message'			=> NULL,
+				'data'				=> NULL,
+			);
+			// Command
 			switch($command) {
-				case 'get_volume':
-					// FIXME
-					break;
-				case 'get_playlist':
-					global $id;
-					if($collection = SQLSelectOne('SELECT `PATH` FROM `collections` WHERE `ID` = '.intval($id))) {
-						if($tracks = $this->scanDirectory($collection['PATH'])) {
-							$json['data'] = $tracks;
+				case 'get_cover': // Get cover
+					if(strlen($param)>0) {
+						include_once('getid3/getid3.php');
+						$getid3 = new getID3;
+						$param = urldecode($param);
+						$param = str_replace('file:///', '', $param);
+						$info = $getid3->analyze($param);
+						if(!isset($info['error'])) {
+							if(isset($info['id3v2']['APIC'][0])) {
+								header('Content-Type: '.$info['id3v2']['APIC'][0]['image_mime']);
+								header('Content-Length: '.$info['id3v2']['APIC'][0]['datalength']);
+								die($info['id3v2']['APIC'][0]['data']);
+							} else {
+								$json['success'] = FALSE;
+								$json['message'] = 'The file does not contain the cover!';
+							}
 						} else {
-							$json['error'] = TRUE;
-							$json['message'] = 'Can\'t get playlist!';
+							$json['success'] = FALSE;
+							$json['message'] = implode('; ', $info['error']);
 						}
 					} else {
-						$json['error'] = TRUE;
-						$json['message'] = 'Unknown ID!';
+						$json['success'] = FALSE;
+						$json['message'] = 'Input is missing!';
 					}
 					break;
-				default:
-					$json['error'] = TRUE;
+				default: // Unknown
+					$json['success'] = FALSE;
 					$json['message'] = 'Unknown command!';
 			}
 			die(json_encode($json));
 		} else {
-			$collections = SQLSelect("SELECT * FROM `collections` ORDER BY `TITLE`");
-			$out['COLLECTIONS'] = $collections;
+			// Config
+			$out['terminal'] = (isset($this->terminal)?$this->terminal:$this->config['terminal']);
+			$out['skin'] = (isset($this->skin)?$this->skin:$this->config['skin']);
 		}
-		*/
 	}
 
 	// Install
 	function install($parent_name='') {
+		$this->getConfig();
+		$this->config['terminal'] = '';
+		$this->config['skin'] = 'rtone1_audioUI';
+		$this->saveConfig();
 		parent::install($parent_name);
 	}
 

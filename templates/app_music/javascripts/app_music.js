@@ -49,21 +49,43 @@ class app_music {
 		this.snapshot = new Object();
 	}
 	
+	// Clone object/array/variable
+	clone(target) {
+		if(target == null || typeof target != 'object') {
+			return target;
+		} else if(target instanceof Array) {
+			var result = [];
+			for(var i = 0, length = target.length; i < length; i++) {
+				result[i] = this.clone(target[i]);
+			}
+			return result;
+		} else if(target instanceof Object) {
+			var result = {};
+			for(var attribute in target) {
+            	if(target.hasOwnProperty(attribute)) {
+					result[attribute] = this.clone(target[attribute]);
+				}
+        	}
+			return result;
+		}
+		return null;
+	}
+	
 	// Create snapshot of status object
 	create_snapshot(property) {
 		if(!!property) {
-			this.snapshot[property] = $.extend(true, {}, this.status[property]);
+			this.snapshot[property] = this.clone(this.status[property]);
 		} else {
-			this.snapshot = $.extend(true, {}, this.status);
+			this.snapshot = this.clone(this.status);
 		}
 	}
 	
 	// Check snapshot of status object
 	check_snapshot(property) {
-		if(property == 'playlist') {
+		if(!!property) {
 			return !(JSON.stringify(this.status[property]) === JSON.stringify(this.snapshot[property]));
 		} else {
-			return !(this.status[property] === this.snapshot[property]);
+			return !(JSON.stringify(this.status) === JSON.stringify(this.snapshot));
 		}
 	}
 	
@@ -281,12 +303,22 @@ class app_music {
 				this.status.playlist.every(function(item) {
 					if(item.id == _this.status.track_id) {
 						$(_this.container).find('.app_music_track_title_text').text(item.name);
+						$.ajax({
+							url: '/popup/app_music.html?ajax=1&command=get_cover&param='+encodeURIComponent(item.file),
+							dataType: 'json'
+						}).done(function(json) {
+							console.warn('get_cover(): '+json.message);
+							$(_this.container).find('.app_music_cover_image').css('background-image', '');
+						}).error(function(jqXHR, textStatus, errorThrown) {
+							if(textStatus == 'parsererror') {
+								$(_this.container).find('.app_music_cover_image').css('background-image', 'url("/popup/app_music.html?ajax=1&command=get_cover&param='+encodeURIComponent(item.file)+'")');
+							}
+						});
 						return false;
 					}
 					return true;
 				});
 			}
-			this.create_snapshot('track_id');
 		}
 		// Length
 		if(this.check_snapshot('length')) {
@@ -295,7 +327,6 @@ class app_music {
 			var s = Math.floor((this.status.length-h*60*60-m*60));
 			var length = (h>0?h+':':'')+('00'+m).slice(-2)+':'+('00'+s).slice(-2);
 			$(this.container).find('.app_music_track_length_text').text(length);
-			this.create_snapshot('length');
 		}
 		// Time
 		if(this.check_snapshot('time')) {
@@ -317,7 +348,6 @@ class app_music {
 					$(this.container).find('.app_music_track_scrubber_element').css('left', scrubber_level+'px');
 				}
 			}
-			this.create_snapshot('time');
 		}
 		// State
 		if(this.check_snapshot('state')) {
@@ -330,7 +360,6 @@ class app_music {
 				$(this.container).find('.app_music_stop_button').addClass('active');
 				$(this.container).find('.app_music_play_button').removeClass('active');
 			}
-			this.create_snapshot('state');
 		}
 		// Volume
 		if(this.check_snapshot('volume')) {
@@ -346,9 +375,7 @@ class app_music {
 					var scrubber_level = Math.round(((volume_length-scrubber_length)/100)*(this.status.volume));
 					$(this.container).find('.app_music_volume_scrubber_element').css('left', scrubber_level+'px');
 				}
-				this.create_snapshot('volume');
 			}
-			
 		}
 		// Random
 		if(this.check_snapshot('random')) {
@@ -357,7 +384,6 @@ class app_music {
 			} else {
 				$(this.container).find('.app_music_pl_random_button').removeClass('active');
 			}
-			this.create_snapshot('random');
 		}
 		// Loop
 		if(this.check_snapshot('loop')) {
@@ -366,7 +392,6 @@ class app_music {
 			} else {
 				$(this.container).find('.app_music_loop_button').removeClass('active');
 			}
-			this.create_snapshot('loop');
 		}
 		// Repeat
 		if(this.check_snapshot('repeat')) {
@@ -375,7 +400,6 @@ class app_music {
 			} else {
 				$(this.container).find('.app_music_repeat_button').removeClass('active');
 			}
-			this.create_snapshot('repeat');
 		}
 		// Loop & Repeat
 		if(this.check_snapshot('loop') || this.check_snapshot('repeat')) {
@@ -389,8 +413,6 @@ class app_music {
 				$(this.container).find('.app_music_pl_loop_repeat_button').removeClass('active_loop');
 				$(this.container).find('.app_music_pl_loop_repeat_button').removeClass('active_repeat');
 			}
-			this.create_snapshot('loop');
-			this.create_snapshot('repeat');
 		}
 		// Playlist
 		if(this.check_snapshot('playlist')) {
@@ -399,7 +421,10 @@ class app_music {
 				$(_this.container).find('.app_music_tracklist_list').append('<li class="app_music_pl_play_button" data-id="'+item.id+'">'+item.name+'</li>');
 				return true;
 			});
-			this.create_snapshot('playlist');
+		}
+		// Snapshot
+		if(this.check_snapshot()) {
+			this.create_snapshot();
 		}
 		// Callback
 		if(!!callback) {

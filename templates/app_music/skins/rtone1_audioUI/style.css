@@ -41,6 +41,7 @@ body {
 	height: 205px;
 	background-color: #CCCCCC;
 	background: url('images/defaultImage.jpg') no-repeat 0px 0px;
+	background-position: center center;
 	background-size: cover;
 }
 
@@ -150,6 +151,7 @@ body {
 	height: 150px;
 	padding: 5px 10px;
 	background: url('images/defaultImage.jpg') no-repeat;
+	background-position: center center;
 	background-size: cover;
 	font-family: Helvetica, Arial, sans-serif;
 	font-size: 10px;
@@ -301,7 +303,7 @@ ol:first-child {
 }
 
 .progressBar .thumbScrubber {
-	top: -5px;
+	top: -5px !important;
 }
 
 .currentTime, .totalTime {
