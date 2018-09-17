@@ -202,7 +202,7 @@ class app_music {
 	check_features(callback) {
 		var _this = this;
 		$.ajax({
-			url: '/popup/app_player.html?ajax=1&command=features&play_terminal='+this.terminal,
+			url: '/popup/app_player.html?ajax=1&command=features'+(this.terminal.length>0?'&play_terminal='+this.terminal:''),
 			dataType: 'json'
 		}).done(function(json) {
 			if(json.success) {
@@ -370,7 +370,7 @@ class app_music {
 	get_status(callback) {
 		var _this = this;
 		$.ajax({
-			url: '/popup/app_player.html?ajax=1&command=status&play_terminal='+this.terminal,
+			url: '/popup/app_player.html?ajax=1&command=status'+(this.terminal.length>0?'&play_terminal='+this.terminal:''),
 			dataType: 'json'
 		}).done(function(json) {
 			if(json.success) {
@@ -395,7 +395,7 @@ class app_music {
 	play(file, callback) {
 		var _this = this;
 		$.ajax({
-			url: '/popup/app_player.html?ajax=1&command=play&param='+encodeURIComponent(file)+'&play_terminal='+this.terminal,
+			url: '/popup/app_player.html?ajax=1&command=play&param='+encodeURIComponent(file)+(this.terminal.length>0?'&play_terminal='+this.terminal:''),
 			dataType: 'json'
 		}).done(function(json) {
 			if(json.success) {
@@ -412,7 +412,7 @@ class app_music {
 	pause(callback) {
 		var _this = this;
 		$.ajax({
-			url: '/popup/app_player.html?ajax=1&command=pause&play_terminal='+this.terminal,
+			url: '/popup/app_player.html?ajax=1&command=pause'+(this.terminal.length>0?'&play_terminal='+this.terminal:''),
 			dataType: 'json'
 		}).done(function(json) {
 			if(json.success) {
@@ -424,12 +424,12 @@ class app_music {
 			}
 		});
 	}
-		
+	
 	// Stop
 	stop(callback) {
 		var _this = this;
 		$.ajax({
-			url: '/popup/app_player.html?ajax=1&command=stop&play_terminal='+this.terminal,
+			url: '/popup/app_player.html?ajax=1&command=stop'+(this.terminal.length>0?'&play_terminal='+this.terminal:''),
 			dataType: 'json'
 		}).done(function(json) {
 			if(json.success) {
@@ -446,7 +446,7 @@ class app_music {
 	next(callback) {
 		var _this = this;
 		$.ajax({
-			url: '/popup/app_player.html?ajax=1&command=next&play_terminal='+this.terminal,
+			url: '/popup/app_player.html?ajax=1&command=next'+(this.terminal.length>0?'&play_terminal='+this.terminal:''),
 			dataType: 'json'
 		}).done(function(json) {
 			if(json.success) {
@@ -468,7 +468,7 @@ class app_music {
 			});
 		} else {
 			$.ajax({
-				url: '/popup/app_player.html?ajax=1&command=previous&play_terminal='+this.terminal,
+				url: '/popup/app_player.html?ajax=1&command=previous'+(this.terminal.length>0?'&play_terminal='+this.terminal:''),
 				dataType: 'json'
 			}).done(function(json) {
 					if(json.success) {
@@ -486,7 +486,7 @@ class app_music {
 	seek(position, callback) {
 		var _this = this;
 		$.ajax({
-			url: '/popup/app_player.html?ajax=1&command=seek&param='+parseInt(position, 10)+'&play_terminal='+this.terminal,
+			url: '/popup/app_player.html?ajax=1&command=seek&param='+parseInt(position, 10)+(this.terminal.length>0?'&play_terminal='+this.terminal:''),
 			dataType: 'json'
 		}).done(function(json) {
 			if(json.success) {
@@ -503,7 +503,7 @@ class app_music {
 	set_volume(level, callback) {
 		var _this = this;
 		$.ajax({
-			url: '/popup/app_player.html?ajax=1&command=set_volume&param='+parseInt(level, 10)+'&play_terminal='+this.terminal,
+			url: '/popup/app_player.html?ajax=1&command=set_volume&param='+parseInt(level, 10)+(this.terminal.length>0?'&play_terminal='+this.terminal:''),
 			dataType: 'json'
 		}).done(function(json) {
 			if(json.success) {
@@ -520,7 +520,7 @@ class app_music {
 	pl_get(callback) {
 		var _this = this;
 		$.ajax({
-			url: '/popup/app_player.html?ajax=1&command=pl_get&play_terminal='+this.terminal,
+			url: '/popup/app_player.html?ajax=1&command=pl_get'+(this.terminal.length>0?'&play_terminal='+this.terminal:''),
 			dataType: 'json'
 		}).done(function(json) {
 			if(json.success) {
@@ -545,7 +545,7 @@ class app_music {
 	pl_add(file, callback) {
 		var _this = this;
 		$.ajax({
-			url: '/popup/app_player.html?ajax=1&command=pl_add&param='+encodeURIComponent(file)+'&play_terminal='+this.terminal,
+			url: '/popup/app_player.html?ajax=1&command=pl_add&param='+encodeURIComponent(file)+(this.terminal.length>0?'&play_terminal='+this.terminal:''),
 			dataType: 'json'
 		}).done(function(json) {
 			if(json.success) {
@@ -562,7 +562,7 @@ class app_music {
 	pl_delete(id, callback) {
 		var _this = this;
 		$.ajax({
-			url: '/popup/app_player.html?ajax=1&command=pl_delete&param='+parseInt(id, 10)+'&play_terminal='+this.terminal,
+			url: '/popup/app_player.html?ajax=1&command=pl_delete&param='+parseInt(id, 10)+(this.terminal.length>0?'&play_terminal='+this.terminal:''),
 			dataType: 'json'
 		}).done(function(json) {
 			if(json.success) {
@@ -579,7 +579,7 @@ class app_music {
 	pl_empty(callback) {
 		var _this = this;
 		$.ajax({
-			url: '/popup/app_player.html?ajax=1&command=pl_empty&play_terminal='+this.terminal,
+			url: '/popup/app_player.html?ajax=1&command=pl_empty'+(this.terminal.length>0?'&play_terminal='+this.terminal:''),
 			dataType: 'json'
 		}).done(function(json) {
 			if(json.success) {
@@ -596,7 +596,7 @@ class app_music {
 	pl_play(id, callback) {
 		var _this = this;
 		$.ajax({
-			url: '/popup/app_player.html?ajax=1&command=pl_play&param='+parseInt(id, 10)+'&play_terminal='+this.terminal,
+			url: '/popup/app_player.html?ajax=1&command=pl_play&param='+parseInt(id, 10)+(this.terminal.length>0?'&play_terminal='+this.terminal:''),
 			dataType: 'json'
 		}).done(function(json) {
 			if(json.success) {
@@ -613,7 +613,7 @@ class app_music {
 	pl_sort(order, callback) {
 		var _this = this;
 		$.ajax({
-			url: '/popup/app_player.html?ajax=1&command=pl_sort&param='+encodeURIComponent(file)+'&play_terminal='+this.terminal,
+			url: '/popup/app_player.html?ajax=1&command=pl_sort&param='+encodeURIComponent(file)+(this.terminal.length>0?'&play_terminal='+this.terminal:''),
 			dataType: 'json'
 		}).done(function(json) {
 			if(json.success) {
@@ -630,7 +630,7 @@ class app_music {
 	pl_random(callback) {
 		var _this = this;
 		$.ajax({
-			url: '/popup/app_player.html?ajax=1&command=pl_random&play_terminal='+this.terminal,
+			url: '/popup/app_player.html?ajax=1&command=pl_random'+(this.terminal.length>0?'&play_terminal='+this.terminal:''),
 			dataType: 'json'
 		}).done(function(json) {
 			if(json.success) {
@@ -647,7 +647,7 @@ class app_music {
 	pl_loop(callback) {
 		var _this = this;
 		$.ajax({
-			url: '/popup/app_player.html?ajax=1&command=pl_loop&play_terminal='+this.terminal,
+			url: '/popup/app_player.html?ajax=1&command=pl_loop'+(this.terminal.length>0?'&play_terminal='+this.terminal:''),
 			dataType: 'json'
 		}).done(function(json) {
 			if(json.success) {
@@ -664,7 +664,7 @@ class app_music {
 	pl_repeat(callback) {
 		var _this = this;
 		$.ajax({
-			url: '/popup/app_player.html?ajax=1&command=pl_repeat&play_terminal='+this.terminal,
+			url: '/popup/app_player.html?ajax=1&command=pl_repeat'+(this.terminal.length>0?'&play_terminal='+this.terminal:''),
 			dataType: 'json'
 		}).done(function(json) {
 			if(json.success) {

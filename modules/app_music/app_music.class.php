@@ -57,6 +57,7 @@ class app_music extends module {
 	function run() {
 		global $session;
 		$out = array();
+		$this->getConfig();
 		if($this->action == 'admin') {
 			$this->admin($out);
 		} else {
@@ -80,6 +81,22 @@ class app_music extends module {
 
 	// BackEnd
 	function admin(&$out) {
+		// Save action
+		if($this->edit_mode == 'save') {
+			global $terminal;
+			$this->config['terminal'] = $terminal;
+			$this->saveConfig();
+			// Redirect
+			$this->redirect('?');
+		}
+		// Terminal
+		$out['terminal'] = $this->config['terminal'];
+		$terminals = SQLSelect('SELECT `NAME`, `TITLE` FROM `terminals` ORDER BY `TITLE`');
+		if($terminals[0]['NAME']) {
+			foreach($terminals as $terminal) {
+				$out['TERMINALS'][] = $terminal;
+			}
+		}
 	}
 
 	// Scan directory for audio files
@@ -107,6 +124,9 @@ class app_music extends module {
 
 	// FrontEnd
 	function usual(&$out) {
+		// Config
+		$out['terminal'] = $this->config['terminal'];
+		
 		/*
 		global $ajax;
 		if(!empty($ajax)) {
