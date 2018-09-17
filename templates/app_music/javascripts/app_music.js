@@ -456,7 +456,7 @@ class app_music {
 				_this.status.time		= json.data.time;
 				if(_this.status.time < 0) {
 					_this.status.time = 0;
-				} else if(_this.status.time > _this.status.length) {
+				} else if((_this.status.time > _this.status.length) && (_this.status.length > 0)) {
 					_this.status.time = _this.status.length;
 				}
 				_this.status.state		= json.data.state;
