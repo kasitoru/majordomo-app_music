@@ -302,7 +302,7 @@ ol:first-child {
 	background-color: whitesmoke;
 }
 
-.progressBar .thumbScrubber {
+.progressMeter .thumbScrubber {
 	top: -5px !important;
 }
 
