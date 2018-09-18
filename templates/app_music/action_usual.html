@@ -202,14 +202,8 @@
 							$(_this.container).find('.app_music_pl_add_button').on('click', function() {
 								_this.pl_add($(this).attr('data-file'));
 							});
-							$(_this.container).find('.app_music_pl_delete_button').on('click', function() {
-								_this.pl_delete($(this).attr('data-id'));
-							});
 							$(_this.container).find('.app_music_pl_empty_button').on('click', function() {
 								_this.pl_empty();
-							});
-							$(_this.container).find('.app_music_pl_play_button').on('click', function() {
-								_this.pl_play($(this).attr('data-id'));
 							});
 							$(_this.container).find('.app_music_pl_sort_button').on('click', function() {
 								_this.pl_sort($(this).attr('data-order'));
@@ -440,6 +434,13 @@
 				this.status.playlist.every(function(item) {
 					$(_this.container).find('.app_music_tracklist_list').append('<li class="app_music_pl_play_button" data-id="'+item.id+'">'+item.name+'</li>');
 					return true;
+				});
+				// Click events
+				$(this.container).find('.app_music_pl_play_button').on('click', function() {
+					_this.pl_play($(this).attr('data-id'));
+				});
+				$(this.container).find('.app_music_pl_delete_button').on('click', function() {
+					_this.pl_delete($(this).attr('data-id'));
 				});
 			}
 			// Snapshot
