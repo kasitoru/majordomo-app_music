@@ -8,7 +8,7 @@
 	class app_music {
 		
 		constructor(play_terminal) {
-			this.container = '#app_music';
+			this.container = '#[#container#]';
 			this.play_terminal = play_terminal;
 			this.session_terminal = '[#SESSION.SESSION_TERMINAL#]';
 			
@@ -161,7 +161,15 @@
 									});
 								}
 							});
-							$(_this.container).find('.app_music_volume_progress_element').on('click', function(e) {
+							$(_this.container).find('.app_music_track_range_input').on('change', function() {
+								var __this = this;
+								_this.seek($(this).val(), function() {
+									$(_this.container).find(__this).removeClass('active');
+								});
+							}).on('input', function() {
+								$(_this.container).find(this).addClass('active');
+							});
+							$(_this.container).find('.app_music_volume_progress_container').on('click', function(e) {
 								var __this = this;
 								$(_this.container).find(this).addClass('active');
 								var offset = $(this).offset();
@@ -179,18 +187,18 @@
 							});
 							$(_this.container).find('.app_music_volume_scrubber_element').draggable({
 								axis: ($(_this.container).find('.app_music_volume_scrubber_element').attr('data-type') == 'vertical'?'y':'x'),
-								containment: $(_this.container).find('.app_music_volume_progress_element'),
+								containment: $(_this.container).find('.app_music_volume_progress_container'),
 								start: function() {
 									$(_this.container).find(this).addClass('active');
 								},
 								stop: function() {
 									var __this = this;
 									if($(this).draggable('option').axis == 'y') {
-										var volume_length = $(_this.container).find('.app_music_volume_progress_element').outerHeight(false);
+										var volume_length = $(_this.container).find('.app_music_volume_progress_container').outerHeight(false);
 										var scrubber_length = $(_this.container).find('.app_music_volume_scrubber_element').outerHeight(false);
 										var volume_level = Math.round(parseInt($(this).css('top'), 10)/((volume_length-scrubber_length)/100));
 									} else {
-										var volume_length = $(_this.container).find('.app_music_volume_progress_element').outerWidth(false);
+										var volume_length = $(_this.container).find('.app_music_volume_progress_container').outerWidth(false);
 										var scrubber_length = $(_this.container).find('.app_music_volume_scrubber_element').outerWidth(false);
 										var volume_level = Math.round(parseInt($(this).css('left'), 10)/((volume_length-scrubber_length)/100));
 									}
@@ -296,7 +304,7 @@
 			// Track title
 			if(this.check_snapshot('track_id')) {
 				if(this.status.track_id == -1) {
-					$(this.container).find('.app_music_track_title_text').text('');
+					$(this.container).find('.app_music_track_title_text').html('&nbsp;');
 					$(this.container).find('.app_music_cover_image').css('background-image', '');
 				} else {
 					this.status.playlist.every(function(item) {
@@ -330,6 +338,7 @@
 				var s = Math.floor((this.status.length-h*60*60-m*60));
 				var length = (h>0?h+':':'')+('00'+m).slice(-2)+':'+('00'+s).slice(-2);
 				$(this.container).find('.app_music_track_length_text').text(length);
+				$(this.container).find('.app_music_track_range_input').attr('min', 0).attr('max', this.status.length).attr('step', 1);
 			}
 			// Time
 			if(this.check_snapshot('time')) {
@@ -338,7 +347,13 @@
 				var s = Math.floor((this.status.time-h*60*60-m*60));
 				var time = (h>0?h+':':'')+('00'+m).slice(-2)+':'+('00'+s).slice(-2);
 				$(this.container).find('.app_music_track_time_text').text(time);
-				if(!$(this.container).find('.app_music_track_progress_container').hasClass('active') && !$(this.container).find('.app_music_track_scrubber_element').hasClass('active')) {
+				if(
+					!$(this.container).find('.app_music_track_progress_container').hasClass('active')
+					&&
+					!$(this.container).find('.app_music_track_scrubber_element').hasClass('active')
+					&&
+					!$(this.container).find('.app_music_track_range_input').hasClass('active')
+				) {
 					// scrubber 
 					if($(this.container).find('.app_music_track_scrubber_element').attr('data-type') == 'vertical') {
 						var progress_length = $(this.container).find('.app_music_track_progress_container').outerHeight(false);
@@ -361,6 +376,8 @@
 						var progress_level = Math.round((progress_length/100)*(this.status.time/(this.status.length/100)));
 						$(this.container).find('.app_music_track_progress_element').css('width', (progress_level || 0)+'px');
 					}
+					// range
+					$(this.container).find('.app_music_track_range_input').val(this.status.time);
 				}
 			}
 			// State
@@ -377,18 +394,37 @@
 			}
 			// Volume
 			if(this.check_snapshot('volume')) {
-				if(!$(this.container).find('.app_music_volume_progress_element').hasClass('active') && !$(this.container).find('.app_music_volume_scrubber_element').hasClass('active')) {
+				if(
+					!$(this.container).find('.app_music_volume_progress_container').hasClass('active')
+					&&
+					!$(this.container).find('.app_music_volume_scrubber_element').hasClass('active')
+					&&
+					!$(this.container).find('.app_music_volume_range_input').hasClass('active')
+				) {
+					// scrubber
 					if($(this.container).find('.app_music_volume_scrubber_element').attr('data-type') == 'vertical') {
-						var volume_length = $(this.container).find('.app_music_volume_progress_element').outerHeight(false);
+						var volume_length = $(this.container).find('.app_music_volume_progress_container').outerHeight(false);
 						var scrubber_length = $(this.container).find('.app_music_volume_scrubber_element').outerHeight(false);
 						var scrubber_level = Math.round(((volume_length-scrubber_length)/100)*(this.status.volume));
 						$(this.container).find('.app_music_volume_scrubber_element').css('top', scrubber_level+'px');
 					} else {
-						var volume_length = $(this.container).find('.app_music_volume_progress_element').outerWidth(false);
+						var volume_length = $(this.container).find('.app_music_volume_progress_container').outerWidth(false);
 						var scrubber_length = $(this.container).find('.app_music_volume_scrubber_element').outerWidth(false);
 						var scrubber_level = Math.round(((volume_length-scrubber_length)/100)*(this.status.volume));
 						$(this.container).find('.app_music_volume_scrubber_element').css('left', scrubber_level+'px');
 					}
+					// progress
+					if($(this.container).find('.app_music_volume_progress_element').attr('data-type') == 'vertical') {
+						var volume_length = $(this.container).find('.app_music_volume_progress_container').outerHeight(false);
+						var progress_level = Math.round((volume_length/100)*(this.status.volume));
+						$(this.container).find('.app_music_volume_progress_element').css('height', (progress_level || 0)+'px');
+					} else {
+						var volume_length = $(this.container).find('.app_music_volume_progress_container').outerWidth(false);
+						var progress_level = Math.round((volume_length/100)*(this.status.volume));
+						$(this.container).find('.app_music_volume_progress_element').css('width', (progress_level || 0)+'px');
+					}
+					// range
+					$(this.container).find('.app_music_volume_range_input').attr('min', 0).attr('max', 100).attr('step', 1).val(this.status.volume);
 				}
 			}
 			// Random

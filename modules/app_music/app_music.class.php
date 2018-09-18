@@ -264,6 +264,7 @@ class app_music extends module {
 			$out['terminal'] = (isset($this->terminal)?$this->terminal:$this->config['terminal']);
 			$out['skin'] = (isset($this->skin)?$this->skin:$this->config['skin']);
 			$out['playlist'] = (isset($this->playlist)?$this->playlist:$this->config['playlist']);
+			$out['container'] = 'app_music'; // FIXME
 		}
 	}
 
