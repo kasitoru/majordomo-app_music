@@ -205,8 +205,10 @@ class app_music extends module {
 					if(strlen($param)>0) {
 						include_once('getid3/getid3.php');
 						$getid3 = new getID3;
-						$param = urldecode($param);
-						$param = str_replace('file:///', '', $param);
+						if(!preg_match('#^(ht|f)tp://#', $param)) {
+							$param = urldecode($param);
+							$param = str_replace('file:///', '', $param);
+						}
 						$info = $getid3->analyze($param);
 						if(!isset($info['error'])) {
 							$json['success'] = TRUE;
@@ -229,8 +231,10 @@ class app_music extends module {
 					if(strlen($param)>0) {
 						include_once('getid3/getid3.php');
 						$getid3 = new getID3;
-						$param = urldecode($param);
-						$param = str_replace('file:///', '', $param);
+						if(!preg_match('#^(ht|f)tp://#', $param)) {
+							$param = urldecode($param);
+							$param = str_replace('file:///', '', $param);
+						}
 						$info = $getid3->analyze($param);
 						if(!isset($info['error'])) {
 							if(isset($info['id3v2']['APIC'][0])) {
