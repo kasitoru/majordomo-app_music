@@ -116,9 +116,9 @@
 .daily_ui_009_music_player_by_emil .cover .content .controls .column.pause {
 	width: 32px;
 	height: 32px;
-	background-image: url('images/play.png');
+	background-image: url('images/pause.png');
 }
 
 .daily_ui_009_music_player_by_emil .cover .content .controls .column.pause.active {
-	background-image: url('images/pause.png');
+	background-image: url('images/play.png');
 }
