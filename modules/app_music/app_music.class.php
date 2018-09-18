@@ -83,9 +83,10 @@ class app_music extends module {
 	function admin(&$out) {
 		// Save action
 		if($this->edit_mode == 'save') {
-			global $terminal, $skin;
+			global $terminal, $skin, $playlist;
 			$this->config['terminal'] = $terminal;
 			$this->config['skin'] = $skin;
+			$this->config['playlist'] = $playlist;
 			$this->saveConfig();
 			// Redirect
 			$this->redirect('?ok');
@@ -113,17 +114,24 @@ class app_music extends module {
 				}
 			}
 		}
+		// Playlists
+		$out['playlist'] = $this->config['playlist'];
+		$playlists = SQLSelect('SELECT `ID`, `PATH`, `TITLE` FROM `collections` ORDER BY `TITLE`');
+		if($playlists[0]['ID']) {
+			foreach($playlists as $playlist) {
+				$out['PLAYLISTS'][] = $playlist;
+			}
+		}
 	}
 
 	// Scan directory for audio files
-	/*
-	function scanDirectory($directory, $results=array()) {
+	private function scanDirectory($directory, $results=array()) {
 		if($dir = openDir($directory)) {
 			while($file = readDir($dir)) {
 				if(($file == '.') || ($file=='..')) {
 					continue;
 				}
-				if(Is_Dir($directory.'/'.$file)) {
+				if(is_dir($directory.'/'.$file)) {
 					$results = $this->scanDirectory($directory.'/'.$file, $results);
 				} else {
 					if(in_array(strtolower(pathinfo($file, PATHINFO_EXTENSION)), array('mp3'))) {
@@ -136,7 +144,6 @@ class app_music extends module {
 		asort($results);
 		return $results;
 	}
-	*/
 
 	// FrontEnd
 	function usual(&$out) {
@@ -151,6 +158,48 @@ class app_music extends module {
 			);
 			// Command
 			switch($command) {
+				case 'get_playlist': // Get playlist
+					if(strlen($param)>0) {
+						if($playlist = SQLSelectOne('SELECT `PATH` FROM `collections` WHERE `ID` = '.DBSafe($param).' OR `TITLE` = \''.DBSafe($param).'\'')) {
+							$files = $this->scanDirectory($playlist['PATH']);
+							include_once('getid3/getid3.php');
+							$getid3 = new getID3;
+							header('Content-Type: audio/x-mpegurl');
+							echo '#EXTM3U'.PHP_EOL;
+							echo PHP_EOL;
+							foreach($files as $file) {
+								$info = $getid3->analyze($file);
+								if(!isset($info['error'])) {
+									$title = '';
+									if(isset($info['tags']['id3v2']['artist'])) {
+										$title .= implode(', ', $info['tags']['id3v2']['artist']);
+									}
+									if(isset($info['tags']['id3v2']['title'])) {
+										if(!empty($title)) { $title .= ' - '; }
+										$title .= implode(', ', $info['tags']['id3v2']['title']);
+									}
+									if(empty($title)) {
+										$title = basename($info['filename'], '.mp3');
+									}
+									$time = round($info['playtime_seconds']);
+								} else {
+									$title = basename($file, '.mp3');
+									$time = -1;
+								}
+								echo '#EXTINF:'.$time.', '.$title.PHP_EOL;
+								echo '/module/app_mediabrowser.html?play='.urlencode($file).PHP_EOL;
+								echo PHP_EOL;
+							}
+							exit;
+						} else {
+							$json['success'] = FALSE;
+							$json['message'] = 'Playlist doesn\'t exist!';
+						}
+					} else {
+						$json['success'] = FALSE;
+						$json['message'] = 'ID/Name is missing!';
+					}
+					break;
 				case 'check_cover': // Check cover
 					if(strlen($param)>0) {
 						include_once('getid3/getid3.php');
@@ -209,6 +258,7 @@ class app_music extends module {
 			// Config
 			$out['terminal'] = (isset($this->terminal)?$this->terminal:$this->config['terminal']);
 			$out['skin'] = (isset($this->skin)?$this->skin:$this->config['skin']);
+			$out['playlist'] = (isset($this->playlist)?$this->playlist:$this->config['playlist']);
 		}
 	}
 
@@ -217,6 +267,7 @@ class app_music extends module {
 		$this->getConfig();
 		$this->config['terminal'] = '';
 		$this->config['skin'] = 'rtone1_audioUI';
+		$this->config['playlist'] = '';
 		$this->saveConfig();
 		parent::install($parent_name);
 	}

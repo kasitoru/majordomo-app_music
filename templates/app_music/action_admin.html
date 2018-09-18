@@ -9,7 +9,7 @@
 				<select name="terminal" class="form-control">
 					<option value=""[#if terminal=""#] selected[#endif#]>Автоопределение</option>
 					[#begin TERMINALS#]
-						<option value="[#NAME#]"[#if NAME="<#terminal#>"#] selected[#endif#]>[#TITLE#]</option>
+						<option value="[#NAME#]"[#if NAME="<#terminal#>"#] selected[#endif#]>[#NAME#] ([#TITLE#])</option>
 					[#end TERMINALS#]
 				</select>
 				<small class="form-text text-muted">Терминал на котором будет воспроизводиться музыка.</small>
@@ -24,6 +24,47 @@
 					[#end SKINS#]
 				</select>
 				<small class="form-text text-muted">От выбранного скина зависит внешний вид плеера.</small>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-lg-3 control-label">Плейлист:</label>
+			<div class="col-lg-5">
+				<select name="playlist" class="form-control">
+					<option value=""[#if playlist=""#] selected[#endif#]>Не выбрано</option>
+					[#begin PLAYLISTS#]
+						<option value="[#ID#]"[#if ID="<#playlist#>" OR TITLE="<#playlist#>"#] selected[#endif#]>[#TITLE#] ([#PATH#])</option>
+					[#end PLAYLISTS#]
+				</select>
+				<small class="form-text text-muted">Музыкальная коллекция для проигрывания.</small>
+			</div>
+			<div class="col-lg-2">
+				<a class="btn btn-default" href="#" onclick="return load_playlist($('select[name=playlist]').val(), $('select[name=terminal]').val(), this);"><i class="glyphicon glyphicon-eject"></i> Загрузить в плеер</a>
+				<script type="text/javascript">
+					function load_playlist(playlist, play_terminal, button) {
+						var session_terminal = 'MAIN'; // FIXME
+						$(button).addClass('disabled');
+						$.ajax({
+							url: '/popup/app_player.html?ajax=1&command=pl_empty&play_terminal='+encodeURIComponent(play_terminal)+'&session_terminal='+encodeURIComponent(session_terminal),
+							dataType: 'json'
+						}).done(function(json) {
+							if(json.success) {
+								$.ajax({
+									url: '/popup/app_player.html?ajax=1&command=pl_add&param='+encodeURIComponent('http://localhost/popup/app_music.html?ajax=1&command=get_playlist&param='+playlist)+'&play_terminal='+encodeURIComponent(play_terminal)+'&session_terminal='+encodeURIComponent(session_terminal),
+									dataType: 'json'
+								}).done(function(json) {
+									if(json.success) {
+										$(button).removeClass('disabled');
+									} else {
+										console.error('pl_add(): '+json.message);
+									}
+								});
+							} else {
+								console.error('pl_empty(): '+json.message);
+							}
+						});
+						return false;
+					}
+				</script>
 			</div>
 		</div>
 		<div class="form-group">
@@ -43,6 +84,7 @@
 <ul>
 <li><b>terminal</b> - терминал для воспроизведения;
 <li><b>skin</b> - скин для изменения внешнего вида плеера;
+<li><b>playlist</b> - название используемого плейлиста;
 </ul>
 <p>Например:<br>
-<strong>&#91;#module name="app_music" mode="menu" <font color="#8a8a8a">terminal="MAIN" skin="rtone1_audioUI"</font>#&#93;</strong></p>
+<strong>&#91;#module name="app_music" mode="menu" <font color="#8a8a8a">terminal="MAIN" skin="ui-green-audio-player"</font>#&#93;</strong></p>
