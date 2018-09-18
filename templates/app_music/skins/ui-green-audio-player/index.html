@@ -23,6 +23,7 @@
 <script type="text/javascript">
 	var music_player = new app_music('[#terminal#]');
 	$(document).ready(function () {
+		music_player.session_terminal = '[#SESSION.SESSION_TERMINAL#]';
 		music_player.init_player(function() {
 			$(music_player.container).find('.volume-btn').on('click', function() {
 				var _this = this;

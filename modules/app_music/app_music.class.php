@@ -74,6 +74,7 @@ class app_music extends module {
 		$out['EDIT_MODE'] = $this->edit_mode;
 		$out['MODE'] = $this->mode;
 		$out['ACTION'] = $this->action;
+		$out['SESSION'] = $session->data;
 		$this->data = $out;
 		$p = new parser(DIR_TEMPLATES.$this->name.'/'.$this->name.'.html', $this->data, $this);
 		$this->result = $p->result;

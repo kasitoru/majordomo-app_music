@@ -9,7 +9,7 @@ class app_music {
 	constructor(play_terminal) {
 		this.container = '#app_music';
 		this.play_terminal = play_terminal;
-		this.session_terminal = 'MAIN';
+		this.session_terminal = '';
 		
 		this.main_timer = null;
 		this.status_timer = null;
