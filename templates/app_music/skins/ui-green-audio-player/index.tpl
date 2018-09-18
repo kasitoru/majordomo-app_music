@@ -1,8 +1,8 @@
 <!-- Made by Greg Hovanesyan: https://codepen.io/gregh/pen/NdVvbm -->
 
-<link rel="stylesheet" href="/templates/app_music/skins/[#skin#]/style.css">
+<link rel="stylesheet" href="/templates/app_music/skins/{$skin|escape:'url'}/style.css">
 
-<div id="[#container#]" class="audio green-audio-player">
+<div id="{$container}" class="audio green-audio-player">
 	<div class="loading app_music_loading_screen"></div>
 	<div class="previous-btn app_music_previous_button" title="Предыдущий трек"></div>
 	<div class="play-pause-btn app_music_pause_button" title="Воспроизведение / Пауза"></div>
@@ -21,7 +21,7 @@
 </div>
 
 <script type="text/javascript">
-	var music_player = new app_music('[#terminal#]');
+	var music_player = new app_music('{$terminal}');
 	$(document).ready(function () {
 		music_player.init_player(function() {
 			$(music_player.container).find('.volume-btn').on('click', function() {

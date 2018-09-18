@@ -76,7 +76,23 @@ class app_music extends module {
 		$out['ACTION'] = $this->action;
 		$out['SESSION'] = $session->data;
 		$this->data = $out;
-		$p = new parser(DIR_TEMPLATES.$this->name.'/'.$this->name.'.html', $this->data, $this);
+		/*
+		// Smarty
+		include_once(ROOT.'lib/smarty/Smarty.class.php');
+		$smarty = new Smarty;
+		$smarty->setTemplateDir(ROOT.'templates');
+		$smarty->setCompileDir(ROOT.'cms/cached/templates_c');
+		$smarty->setCacheDir(ROOT.'cms/cached');
+		$smarty->debugging = false;
+		$smarty->caching = true;
+		$smarty->setCaching(120);
+		foreach($out as $key => $value) {
+			$smarty->assign($key, $value);
+		}
+		$template = DIR_TEMPLATES.$this->name.'/'.$this->name.'.tpl';
+		$this->result = $smarty->fetch($template);
+		*/
+		$p = new parser(DIR_TEMPLATES.$this->name.'/'.$this->name.'.tpl', $this->data, $this);
 		$this->result = $p->result;
 	}
 
@@ -110,7 +126,7 @@ class app_music extends module {
 		if(is_array($skins)) {
 			foreach($skins as $skin) {
 				$skin = DIR_TEMPLATES.$this->name.'/skins/'.$skin;
-				if(is_dir($skin) && file_exists($skin.'/index.html')) {
+				if(is_dir($skin) && file_exists($skin.'/index.tpl')) {
 					$out['SKINS'][] = array('NAME' => basename($skin));
 				}
 			}

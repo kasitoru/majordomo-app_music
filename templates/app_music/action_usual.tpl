@@ -8,9 +8,9 @@
 	class app_music {
 		
 		constructor(play_terminal) {
-			this.container = '#[#container#]';
+			this.container = '#{$container}';
 			this.play_terminal = play_terminal;
-			this.session_terminal = '[#SESSION.SESSION_TERMINAL#]';
+			this.session_terminal = '{$SESSION.SESSION_TERMINAL}';
 			
 			this.main_timer = null;
 			this.status_timer = null;
@@ -834,4 +834,4 @@
 	}
 </script>
 
-[#inc skins/<#skin#>/index.html#]
+{include file="./skins/$skin/index.tpl"}
