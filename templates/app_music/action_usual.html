@@ -297,6 +297,7 @@
 			if(this.check_snapshot('track_id')) {
 				if(this.status.track_id == -1) {
 					$(this.container).find('.app_music_track_title_text').text('');
+					$(this.container).find('.app_music_cover_image').css('background-image', '');
 				} else {
 					this.status.playlist.every(function(item) {
 						if(item.id == _this.status.track_id) {
@@ -343,22 +344,22 @@
 						var progress_length = $(this.container).find('.app_music_track_progress_container').outerHeight(false);
 						var scrubber_length = $(this.container).find('.app_music_track_scrubber_element').outerHeight(false);
 						var scrubber_level = Math.round(((progress_length-scrubber_length)/100)*(this.status.time/(this.status.length/100)));
-						$(this.container).find('.app_music_track_scrubber_element').css('top', scrubber_level+'px');
+						$(this.container).find('.app_music_track_scrubber_element').css('top', (scrubber_level || 0)+'px');
 					} else {
 						var progress_length = $(this.container).find('.app_music_track_progress_container').outerWidth(false);
 						var scrubber_length = $(this.container).find('.app_music_track_scrubber_element').outerWidth(false);
 						var scrubber_level = Math.round(((progress_length-scrubber_length)/100)*(this.status.time/(this.status.length/100)));
-						$(this.container).find('.app_music_track_scrubber_element').css('left', scrubber_level+'px');
+						$(this.container).find('.app_music_track_scrubber_element').css('left', (scrubber_level || 0)+'px');
 					}
 					// progress
 					if($(this.container).find('.app_music_track_progress_element').attr('data-type') == 'vertical') {
 						var progress_length = $(this.container).find('.app_music_track_progress_container').outerHeight(false);
 						var progress_level = Math.round((progress_length/100)*(this.status.time/(this.status.length/100)));
-						$(this.container).find('.app_music_track_progress_element').css('height', progress_level+'px');
+						$(this.container).find('.app_music_track_progress_element').css('height', (progress_level || 0)+'px');
 					} else {
 						var progress_length = $(this.container).find('.app_music_track_progress_container').outerWidth(false);
 						var progress_level = Math.round((progress_length/100)*(this.status.time/(this.status.length/100)));
-						$(this.container).find('.app_music_track_progress_element').css('width', progress_level+'px');
+						$(this.container).find('.app_music_track_progress_element').css('width', (progress_level || 0)+'px');
 					}
 				}
 			}
