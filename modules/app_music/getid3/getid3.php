@@ -423,33 +423,59 @@ class getID3
 			$this->info['GETID3_VERSION']   = $this->version();
 			$this->info['php_memory_limit'] = (($this->memory_limit > 0) ? $this->memory_limit : false);
 
-			// remote files not supported
-			if (preg_match('#^(ht|f)tp://#', $filename)) {
-				throw new getid3_exception('Remote files are not supported - please copy the file locally first');
-			}
-
-			$filename = str_replace('/', DIRECTORY_SEPARATOR, $filename);
-			//$filename = preg_replace('#(?<!gs:)('.preg_quote(DIRECTORY_SEPARATOR).'{2,})#', DIRECTORY_SEPARATOR, $filename);
-
-			// open local file
-			//if (is_readable($filename) && is_file($filename) && ($this->fp = fopen($filename, 'rb'))) { // see https://www.getid3.org/phpBB3/viewtopic.php?t=1720
-			if ((is_readable($filename) || file_exists($filename)) && is_file($filename) && ($this->fp = fopen($filename, 'rb'))) {
-				// great
-			} else {
-				$errormessagelist = array();
-				if (!is_readable($filename)) {
-					$errormessagelist[] = '!is_readable';
+			// remote file
+			if (preg_match('#^(ht|f)tp://#', $filename) && ($this->fp = tmpfile())) {
+				// get filesize
+				if($headers = @get_headers($filename)) {
+					$filesize = -1;
+					foreach($headers as $header) {
+						$header = explode(':', $header, 2);
+						if(trim($header[0]) == 'Content-Length') {
+							$filesize = (int)$header[1];
+							break;
+						}
+					}
+					// check filesize
+					if($filesize > 1024*1024*(int)ini_get('upload_max_filesize')) {
+						fclose($this->fp);
+						throw new getid3_exception('Filesize is too large!');
+					}
+					// get data
+					if($data = @file_get_contents($filename, false, NULL, 0, $filesize)) {
+						$filesize = fwrite($this->fp, $data);
+					} else {
+						fclose($this->fp);
+						throw new getid3_exception('Unable to read a remote file!');
+					}
+				} else {
+					fclose($this->fp);
+					throw new getid3_exception('Unable to determine actual filesize!');
 				}
-				if (!is_file($filename)) {
-					$errormessagelist[] = '!is_file';
+			} else { // local file
+				
+				$filename = str_replace('/', DIRECTORY_SEPARATOR, $filename);
+				//$filename = preg_replace('#(?<!gs:)('.preg_quote(DIRECTORY_SEPARATOR).'{2,})#', DIRECTORY_SEPARATOR, $filename);
+				
+				// open
+				//if (is_readable($filename) && is_file($filename) && ($this->fp = fopen($filename, 'rb'))) { // see https://www.getid3.org/phpBB3/viewtopic.php?t=1720
+				if ((is_readable($filename) || file_exists($filename)) && is_file($filename) && ($this->fp = fopen($filename, 'rb'))) {
+					// great
+				} else {
+					$errormessagelist = array();
+					if (!is_readable($filename)) {
+						$errormessagelist[] = '!is_readable';
+					}
+					if (!is_file($filename)) {
+						$errormessagelist[] = '!is_file';
+					}
+					if (!file_exists($filename)) {
+						$errormessagelist[] = '!file_exists';
+					}
+					if (empty($errormessagelist)) {
+						$errormessagelist[] = 'fopen failed';
+					}
+					throw new getid3_exception('Could not open "'.$filename.'" ('.implode('; ', $errormessagelist).')');
 				}
-				if (!file_exists($filename)) {
-					$errormessagelist[] = '!file_exists';
-				}
-				if (empty($errormessagelist)) {
-					$errormessagelist[] = 'fopen failed';
-				}
-				throw new getid3_exception('Could not open "'.$filename.'" ('.implode('; ', $errormessagelist).')');
 			}
 
 			$this->info['filesize'] = (!is_null($filesize) ? $filesize : filesize($filename));
