@@ -425,13 +425,18 @@ class getID3
 
 			// remote file
 			if (preg_match('#^(ht|f)tp://#', $filename) && ($this->fp = tmpfile())) {
+				// Stream context
+				$context = stream_context_create(array(
+					'http' => array(
+						'timeout' => 1,
+					)
+				));
 				// get filesize
-				if($headers = @get_headers($filename)) {
+				if($headers = @get_headers($filename, true, $context)) {
 					$filesize = -1;
-					foreach($headers as $header) {
-						$header = explode(':', $header, 2);
-						if(trim($header[0]) == 'Content-Length') {
-							$filesize = (int)$header[1];
+					foreach($headers as $header => $value) {
+						if($header === 'Content-Length') {
+							$filesize = $value;
 							break;
 						}
 					}
@@ -441,7 +446,7 @@ class getID3
 						throw new getid3_exception('Filesize is too large!');
 					}
 					// get data
-					if($data = @file_get_contents($filename, false, NULL, 0, $filesize)) {
+					if($data = @file_get_contents($filename, false, $context, 0, $filesize)) {
 						$filesize = fwrite($this->fp, $data);
 					} else {
 						fclose($this->fp);
