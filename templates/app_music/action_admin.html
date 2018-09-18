@@ -38,7 +38,7 @@
 				<small class="form-text text-muted">Музыкальная коллекция для проигрывания.</small>
 			</div>
 			<div class="col-lg-2">
-				<a class="btn btn-default" href="#" onclick="return load_playlist($('select[name=playlist]').val(), $('select[name=terminal]').val(), this);"><i class="glyphicon glyphicon-eject"></i> Загрузить в плеер</a>
+				<a class="btn btn-default" href="#" onclick="return load_playlist($('select[name=playlist]').val(), $('select[name=terminal]').val(), this);" title="Загрузить выбранный плейлист в плеер"><i class="glyphicon glyphicon-eject"></i> Загрузить в плеер</a>
 				<script type="text/javascript">
 					function load_playlist(playlist, play_terminal, button) {
 						var session_terminal = '[#SESSION.SESSION_TERMINAL#]';
@@ -55,10 +55,12 @@
 									if(json.success) {
 										$(button).removeClass('disabled');
 									} else {
+										$(button).parent('div').attr('title', json.message);
 										console.error('pl_add(): '+json.message);
 									}
 								});
 							} else {
+								$(button).parent('div').attr('title', json.message);
 								console.error('pl_empty(): '+json.message);
 							}
 						});
