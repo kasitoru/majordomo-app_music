@@ -41,14 +41,14 @@
 				<a class="btn btn-default" href="#" onclick="return load_playlist($('select[name=playlist]').val(), $('select[name=terminal]').val(), this);" title="Загрузить выбранный плейлист в плеер"><i class="glyphicon glyphicon-eject"></i> Загрузить в плеер</a>
 				<script type="text/javascript">
 					function load_playlist(playlist, play_terminal, button) {
-						if(playlist.length > 0) {
-							var session_terminal = '[#SESSION.SESSION_TERMINAL#]';
-							$(button).addClass('disabled');
-							$.ajax({
-								url: '/popup/app_player.html?ajax=1&command=pl_empty&play_terminal='+encodeURIComponent(play_terminal)+'&session_terminal='+encodeURIComponent(session_terminal),
-								dataType: 'json'
-							}).done(function(json) {
-								if(json.success) {
+						var session_terminal = '[#SESSION.SESSION_TERMINAL#]';
+						$(button).addClass('disabled');
+						$.ajax({
+							url: '/popup/app_player.html?ajax=1&command=pl_empty&play_terminal='+encodeURIComponent(play_terminal)+'&session_terminal='+encodeURIComponent(session_terminal),
+							dataType: 'json'
+						}).done(function(json) {
+							if(json.success) {
+								if(playlist.length > 0) {
 									$.ajax({
 										url: '/popup/app_player.html?ajax=1&command=pl_add&param='+encodeURIComponent('http://localhost/popup/app_music.html?ajax=1&command=get_playlist&param='+playlist)+'&play_terminal='+encodeURIComponent(play_terminal)+'&session_terminal='+encodeURIComponent(session_terminal),
 										dataType: 'json'
@@ -61,11 +61,13 @@
 										}
 									});
 								} else {
-									$(button).parent('div').attr('title', json.message);
-									console.error('pl_empty(): '+json.message);
+									$(button).removeClass('disabled');
 								}
-							});
-						}
+							} else {
+								$(button).parent('div').attr('title', json.message);
+								console.error('pl_empty(): '+json.message);
+							}
+						});
 						return false;
 					}
 				</script>
