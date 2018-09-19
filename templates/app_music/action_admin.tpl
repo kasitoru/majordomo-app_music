@@ -1,7 +1,6 @@
-<div class="alert alert-info"><strong>Информация:</strong> Данный модуль работает только на alpha-ветке MajorDoMo! Подробную информацию по обновлению вы можете получить <a href="https://majordomo.smartliving.ru/forum/viewtopic.php?f=7&t=3569" target="_blank"><u>здесь</u></a>.</div>
 <form action="?" method="post" class="form-horizontal">
-	{if $OK}<div class="alert alert-success">{$OK}</div>{/if}
-	{if $ERROR}<div class="alert alert-danger">{$ERROR}</div>{/if}
+	{if $OK}<div class="alert alert-success"><strong>Информация:</strong> {$OK}</div>{/if}
+	{if $ERROR}<div class="alert alert-danger"><strong>Ошибка:</strong> {$ERROR}</div>{/if}
 	<fieldset>
 		<div class="form-group">
 			<label class="col-lg-3 control-label">Терминал:</label>

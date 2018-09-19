@@ -111,6 +111,7 @@ class app_music extends module {
 		// Alerts
 		global $ok, $error;
 		if(isset($ok)) $out['OK'] = '<#LANG_DATA_SAVED#>';
+		if(MASTER_UPDATE_URL != 'https://github.com/sergejey/majordomo/archive/alpha.tar.gz') $out['ERROR'] = 'Данный модуль работает только на alpha-ветке MajorDoMo! Подробную информацию по обновлению вы можете получить <a href="https://majordomo.smartliving.ru/forum/viewtopic.php?f=7&t=3569" target="_blank"><u>здесь</u></a>.';
 		if(isset($error)) $out['ERROR'] = '<#LANG_FILLOUT_REQURED#>';
 		// Terminal
 		$out['terminal'] = $this->config['terminal'];
