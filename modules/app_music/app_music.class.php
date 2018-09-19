@@ -286,6 +286,14 @@ class app_music extends module {
 
 	// Install
 	function install($parent_name='') {
+		// Default config
+		$this->getConfig();
+		if(!$this->config) {
+			$this->config['terminal'] = '';
+			$this->config['skin'] = 'rtone1_audioUI';
+			$this->config['playlist'] = '';
+			$this->saveConfig();
+		}
 		parent::install($parent_name);
 	}
 
@@ -296,11 +304,6 @@ class app_music extends module {
 
 	// dbInstall
 	function dbInstall($data) {
-		$this->getConfig();
-		$this->config['terminal'] = '';
-		$this->config['skin'] = 'rtone1_audioUI';
-		$this->config['playlist'] = '';
-		$this->saveConfig();
 		parent::dbInstall($data);
 	}
 
