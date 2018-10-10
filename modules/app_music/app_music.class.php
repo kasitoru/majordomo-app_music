@@ -76,22 +76,6 @@ class app_music extends module {
 		$out['ACTION'] = $this->action;
 		$out['SESSION'] = $session->data;
 		$this->data = $out;
-		/*
-		// Smarty
-		include_once(ROOT.'lib/smarty/Smarty.class.php');
-		$smarty = new Smarty;
-		$smarty->setTemplateDir(ROOT.'templates');
-		$smarty->setCompileDir(ROOT.'cms/cached/templates_c');
-		$smarty->setCacheDir(ROOT.'cms/cached');
-		$smarty->debugging = false;
-		$smarty->caching = true;
-		$smarty->setCaching(120);
-		foreach($out as $key => $value) {
-			$smarty->assign($key, $value);
-		}
-		$template = DIR_TEMPLATES.$this->name.'/'.$this->name.'.tpl';
-		$this->result = $smarty->fetch($template);
-		*/
 		$p = new parser(DIR_TEMPLATES.$this->name.'/'.$this->name.'.tpl', $this->data, $this);
 		$this->result = $p->result;
 	}
@@ -144,6 +128,7 @@ class app_music extends module {
 
 	// Scan directory for audio files
 	private function scanDirectory($directory, $results=array()) {
+		$directory = rtrim($directory, DIRECTORY_SEPARATOR);
 		if($dir = openDir($directory)) {
 			while($file = readDir($dir)) {
 				if(($file == '.') || ($file=='..')) {
