@@ -171,6 +171,7 @@ class app_music extends module {
 							echo '#EXTM3U'.PHP_EOL;
 							echo PHP_EOL;
 							foreach($files as $file) {
+								$file_ext = pathinfo($file, PATHINFO_EXTENSION);
 								$info = $getid3->analyze($file);
 								if(!isset($info['error'])) {
 									$title = '';
@@ -182,15 +183,15 @@ class app_music extends module {
 										$title .= implode(', ', $info['tags']['id3v2']['title']);
 									}
 									if(empty($title)) {
-										$title = basename($info['filename'], '.mp3');
+										$title = basename($info['filename'], '.'.$file_ext);
 									}
 									$time = round($info['playtime_seconds']);
 								} else {
-									$title = basename($file, '.mp3');
+									$title = basename($file, '.'.$file_ext);
 									$time = -1;
 								}
 								echo '#EXTINF:'.$time.', '.$title.PHP_EOL;
-								echo '/module/app_mediabrowser.html?play='.urlencode($file).PHP_EOL;
+								echo '/module/app_mediabrowser.'.($file_ext?$file_ext:'html').'?play='.urlsafe_b64encode($file).PHP_EOL;
 								echo PHP_EOL;
 							}
 							exit;
