@@ -1,4 +1,4 @@
-<script type="text/javascript" src="/js/jquery-ui-1.9.1.custom.min.js"></script>
+<script type="text/javascript" src="/templates/app_music/jquery-ui-draggable.js"></script>
 <script type="text/javascript">
 	/*
 		Music Player for MajorDoMo
