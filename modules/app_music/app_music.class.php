@@ -123,6 +123,9 @@ class app_music extends module {
 				$out['PLAYLISTS'][] = $playlist;
 			}
 		}
+		// Base urldecode
+		$out['BASE_URL'] = BASE_URL;
+		$out['BASE_URL'] = 'http://'.$_SERVER['SERVER_ADDR'].':'.$_SERVER['SERVER_PORT'];;
 	}
 
 	// Scan directory for audio files

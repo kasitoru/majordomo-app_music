@@ -49,7 +49,7 @@
 							if(json.success) {
 								if(playlist.length > 0) {
 									$.ajax({
-										url: '/popup/app_player.html?ajax=1&command=pl_add&param='+encodeURIComponent('http://localhost/popup/app_music.html?ajax=1&command=get_playlist&param='+playlist)+'&play_terminal='+encodeURIComponent(play_terminal)+'&session_terminal='+encodeURIComponent(session_terminal),
+										url: '/popup/app_player.html?ajax=1&command=pl_add&param='+encodeURIComponent('{$BASE_URL}/popup/app_music.html?ajax=1&command=get_playlist&param='+playlist)+'&play_terminal='+encodeURIComponent(play_terminal)+'&session_terminal='+encodeURIComponent(session_terminal),
 										dataType: 'json'
 									}).done(function(json) {
 										if(json.success) {
