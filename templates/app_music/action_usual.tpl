@@ -96,9 +96,11 @@
 			var _this = this;
 			// Check support for required features
 			this.check_features(function(compatibility) {
+				/*
 				if(!compatibility) {
 					alert('This type of terminal does not support all the necessary commands! Correct work is not guaranteed.');
 				}
+				*/
 				// Get player status
 				_this.get_status(function() {
 					// Get playlist
