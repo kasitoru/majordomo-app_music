@@ -125,7 +125,7 @@ class app_music extends module {
 		}
 		// Base urldecode
 		$out['BASE_URL'] = BASE_URL;
-		$out['BASE_URL'] = 'http://'.$_SERVER['SERVER_ADDR'].':'.$_SERVER['SERVER_PORT'];;
+		$out['BASE_URL'] = 'http://'.$_SERVER['SERVER_ADDR'].':'.$_SERVER['SERVER_PORT'];
 	}
 
 	// Scan directory for audio files
@@ -165,11 +165,12 @@ class app_music extends module {
 			switch($command) {
 				case 'get_playlist': // Get playlist
 					if(strlen($param)>0) {
-						if($playlist = SQLSelectOne('SELECT `PATH` FROM `collections` WHERE `ID` = '.DBSafe($param).' OR `TITLE` = \''.DBSafe($param).'\'')) {
+						if($playlist = SQLSelectOne('SELECT `ID`, `PATH` FROM `collections` WHERE `ID` = '.DBSafe($param).' OR `TITLE` = \''.DBSafe($param).'\'')) {
 							$files = $this->scanDirectory($playlist['PATH']);
 							include_once('getid3/getid3.php');
 							$getid3 = new getID3;
 							header('Content-Type: audio/x-mpegurl');
+							header('Content-Disposition: attachment; filename=app_music_playlist_'.$playlist['ID'].'.m3u');
 							echo '#EXTM3U'.PHP_EOL;
 							echo PHP_EOL;
 							foreach($files as $file) {
@@ -193,7 +194,7 @@ class app_music extends module {
 									$time = -1;
 								}
 								echo '#EXTINF:'.$time.', '.$title.PHP_EOL;
-								echo '/module/app_mediabrowser.'.($file_ext?$file_ext:'html').'?play='.urlsafe_b64encode($file).PHP_EOL;
+								echo 'http://'.$_SERVER['SERVER_ADDR'].':'.$_SERVER['SERVER_PORT'].'/module/app_mediabrowser.'.($file_ext?$file_ext:'html').'?play='.urlsafe_b64encode($file).PHP_EOL;
 								echo PHP_EOL;
 							}
 							exit;
