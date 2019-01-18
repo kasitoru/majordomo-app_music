@@ -167,37 +167,13 @@ class app_music extends module {
 					if(strlen($param)>0) {
 						if($playlist = SQLSelectOne('SELECT `ID`, `PATH` FROM `collections` WHERE `ID` = '.DBSafe($param).' OR `TITLE` = \''.DBSafe($param).'\'')) {
 							$files = $this->scanDirectory($playlist['PATH']);
-							include_once('getid3/getid3.php');
-							$getid3 = new getID3;
-							header('Content-Type: audio/x-mpegurl');
-							header('Content-Disposition: attachment; filename=app_music_playlist_'.$playlist['ID'].'.m3u');
-							echo '#EXTM3U'.PHP_EOL;
-							echo PHP_EOL;
+							$json['success'] = TRUE;
+							$json['message'] = 'OK';
+							$json['data'] = array();
 							foreach($files as $file) {
 								$file_ext = pathinfo($file, PATHINFO_EXTENSION);
-								$info = $getid3->analyze($file);
-								if(!isset($info['error'])) {
-									$title = '';
-									if(isset($info['tags']['id3v2']['artist'])) {
-										$title .= implode(', ', $info['tags']['id3v2']['artist']);
-									}
-									if(isset($info['tags']['id3v2']['title'])) {
-										if(!empty($title)) { $title .= ' - '; }
-										$title .= implode(', ', $info['tags']['id3v2']['title']);
-									}
-									if(empty($title)) {
-										$title = basename($info['filename'], '.'.$file_ext);
-									}
-									$time = round($info['playtime_seconds']);
-								} else {
-									$title = basename($file, '.'.$file_ext);
-									$time = -1;
-								}
-								echo '#EXTINF:'.$time.', '.$title.PHP_EOL;
-								echo 'http://'.$_SERVER['SERVER_ADDR'].':'.$_SERVER['SERVER_PORT'].'/module/app_mediabrowser.'.($file_ext?$file_ext:'html').'?play='.urlsafe_b64encode($file).PHP_EOL;
-								echo PHP_EOL;
+								$json['data'][] = 'http://'.$_SERVER['SERVER_ADDR'].':'.$_SERVER['SERVER_PORT'].'/module/app_mediabrowser.'.($file_ext?$file_ext:'html').'?play='.urlsafe_b64encode($file);
 							}
-							exit;
 						} else {
 							$json['success'] = FALSE;
 							$json['message'] = 'Playlist doesn\'t exist!';
