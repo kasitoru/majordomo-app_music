@@ -5,3 +5,5 @@
 # Music Player (module for MajorDoMo)
 
 Music player for smart home. Allows you to play music within the current playlist.
+
+https://connect.smartliving.ru/addons/category2/139.html
