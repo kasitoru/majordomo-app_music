@@ -1,8 +1,8 @@
 <?php
 /*
 	Music Player for MajorDoMo
-	Author: Sergey Avdeev <thesoultaker48@gmail.com>
-	URL: https://github.com/thesoultaker48/majordomo-app_music
+	Author: Sergey Avdeev <avdeevsv91@gmail.com>
+	URL: https://github.com/avdeevsv91/majordomo-app_music
 */
 
 class app_music extends module {
