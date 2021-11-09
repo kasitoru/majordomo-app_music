@@ -3,7 +3,7 @@
 	/*
 		Music Player for MajorDoMo
 		Author: Sergey Avdeev <avdeevsv91@gmail.com>
-		URL: https://github.com/avdeevsv91/majordomo-app_music
+		URL: https://github.com/kasitoru/majordomo-app_music
 	*/
 	class app_music {
 		
